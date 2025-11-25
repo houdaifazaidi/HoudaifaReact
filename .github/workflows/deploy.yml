@@ -21,3 +21,7 @@ jobs:
         with:
           github_token: ${{ secrets.TOKEN }}
           publish_dir: ./  # deploy from repo root
+          cname: false  # disable Jekyll processing
+      
+      - name: Create .nojekyll file
+        run: touch ./.nojekyll
