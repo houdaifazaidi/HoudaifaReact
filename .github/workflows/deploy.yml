@@ -3,10 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # deploy on pushes to main
+      - main
 
 permissions:
-  contents: write  # needed to push to gh-pages branch
+  contents: write
 
 jobs:
   deploy:
@@ -20,4 +20,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.TOKEN }}
-          publish_dir: ./  # deploy from root of the repo
+          publish_dir: ./  # deploy from repo root
