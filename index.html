@@ -3,396 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Document Gallery</title>
+    <title>Houdaifa Zaidi | React & JS Workshops</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* --- VARIABLES --- */
         :root {
-            --primary-color: #4361ee;
-            --primary-light: #4cc9f0;
-            --primary-dark: #3a0ca3;
-            --nosql-color: #2f855a; /* warm green for NoSQL (Mongo-like) */
-            --nosql-light: #66d19e;
-            --text-color: #1a1a2e;
-            --text-light: #6c757d;
-            --bg-color: #f8f9fa;
+            /* Branding Colors */
+            --react-blue: #61dafb;      /* React Icon */
+            --react-dark: #20232a;
+            --js-yellow: #f7df1e;       /* JavaScript Icon */
+            --js-dark: #323330;
+            
+            /* Theme Colors (General structure) */
+            --primary: #2563eb;       
+            --secondary: #0f172a;     
+            --bg-light: #f8fafc;
             --card-bg: #ffffff;
-            --border-radius: 12px;
+            --text-dark: #334155;
+            --text-light: #64748b;
+            
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
             min-height: 100vh;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
+        a { text-decoration: none; color: inherit; transition: color 0.3s; }
+
+        /* --- Header & Navigation --- */
+        header {
+            background: white;
+            padding: 20px 5%;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand { font-weight: 800; font-size: 1.5rem; color: var(--secondary); text-decoration: none; }
+        .brand span.react { color: var(--react-blue); }
+        .brand span.js { color: var(--js-yellow); }
+        .back-btn { 
+            color: var(--text-light); 
+            font-weight: 500; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: var(--transition);
+        }
+        .back-btn:hover { color: var(--primary); transform: translateX(-5px); }
+
+        /* --- Hero Section --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: linear-gradient(180deg, #eff6ff 0%, var(--bg-light) 100%);
+        }
+
+        .hero-icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .react-logo {
+            font-size: 4rem;
+            color: var(--react-blue);
+            animation: spin 20s linear infinite;
+        }
+        .js-logo {
+             font-size: 3.5rem;
+             color: var(--js-yellow);
+             text-shadow: 0 0 10px rgba(247, 223, 30, 0.5);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        /* --- Filtering --- */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .filter-btn {
+            border: none;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-dark);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover { transform: translateY(-2px); color: var(--primary); }
+        
+        .filter-btn.active.react-active {
+            background: var(--react-blue);
+            color: var(--react-dark);
+            box-shadow: 0 4px 12px rgba(97, 218, 251, 0.4);
+        }
+        .filter-btn.active.js-active {
+            background: var(--js-yellow);
+            color: var(--js-dark);
+            box-shadow: 0 4px 12px rgba(247, 223, 30, 0.5);
+        }
+
+        /* --- Grid & Card --- */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
+            padding: 0 20px 80px;
         }
 
-        header {
-            text-align: center;
-            padding: 4rem 0 3rem;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-            border-radius: 2px;
-        }
-
-        h1 {
-            font-size: 2.75rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-light);
-            font-weight: 400;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        .pdf-gallery {
+        .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.75rem;
-            margin: 3rem 0;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 30px;
         }
 
-        .pdf-card {
+        .project-card {
             background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
             transition: var(--transition);
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
-            height: 100%;
             position: relative;
-            overflow: hidden;
         }
 
-        .pdf-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
         }
+        
+        /* Thematic bars for project types */
+        .card-top-bar { height: 6px; width: 100%; border-top-left-radius: 16px; border-top-right-radius: 16px; }
+        .bar-react { background: linear-gradient(90deg, var(--react-blue), #a5f3fc); }
+        .bar-js { background: linear-gradient(90deg, var(--js-yellow), #fcd34d); }
 
-        /* SQL and NoSQL specific accents */
-        .pdf-card.sql::before {
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-        }
+        .card-content { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; }
 
-        .pdf-card.nosql::before {
-            background: linear-gradient(90deg, var(--nosql-color), var(--nosql-light));
-        }
-
-        .pdf-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .pdf-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin: 1rem 0 1.5rem;
-            opacity: 0.9;
-            transition: var(--transition);
-        }
-
-        .pdf-card.sql .pdf-icon {
-            color: var(--primary-color);
-        }
-
-        .pdf-card.nosql .pdf-icon {
-            color: var(--nosql-color);
-        }
-
-        .pdf-card:hover .pdf-icon {
-            transform: scale(1.1);
-        }
-
-        .pdf-card h3 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--primary-dark);
-        }
-
-        .pdf-card p {
-            color: var(--text-light);
-            margin-bottom: 1.75rem;
-            font-size: 1rem;
-            flex-grow: 1;
-            line-height: 1.6;
-        }
-
-        .pdf-link {
-            display: inline-flex;
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-            color: white;
-            text-decoration: none;
-            padding: 0.75rem 1.75rem;
-            border-radius: 50px;
-            font-weight: 500;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        .card-react .icon-box { background: #e0f2fe; color: var(--react-blue); }
+        .card-js .icon-box { background: #fffbeb; color: var(--js-dark); }
+
+
+        .project-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .project-card p.description {
+            color: var(--text-light);
             font-size: 0.95rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .card-actions {
+            margin-top: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--react-dark);
+            background: var(--react-blue);
+            box-shadow: 0 4px 12px rgba(97, 218, 251, 0.3);
             transition: var(--transition);
-            width: fit-content;
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            margin: 5px;
+            flex: 1;
+            min-width: 100px;
+            justify-content: center;
         }
 
-        .pdf-card.nosql .pdf-link {
-            background: linear-gradient(90deg, var(--nosql-color), var(--nosql-light));
+        .card-js .btn-link {
+             background: var(--js-yellow);
+             color: var(--js-dark);
+             box-shadow: 0 4px 12px rgba(247, 223, 30, 0.3);
         }
 
-        .pdf-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-dark), var(--primary-color));
-            opacity: 0;
-            transition: var(--transition);
-            z-index: -1;
-        }
+        .btn-link:hover { transform: translateY(-2px); }
 
-        .pdf-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-        }
-
-        .pdf-link:hover::before {
-            opacity: 1;
-        }
-
-        .file-path {
+        .file-path-new {
             font-family: 'SF Mono', 'Roboto Mono', monospace;
             font-size: 0.75rem;
             color: var(--text-light);
-            margin-top: 1.5rem;
-            padding-top: 1rem;
+            margin-top: 15px;
+            padding-top: 10px;
             border-top: 1px dashed rgba(0, 0, 0, 0.08);
             word-break: break-all;
-            opacity: 0.7;
-            transition: var(--transition);
+            opacity: 0.8;
         }
-
-        /* Type badge (SQL / NoSQL) */
-        .type {
+        
+        .type-badge {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.35rem 0.6rem;
+            top: 20px;
+            right: 20px;
+            padding: 5px 12px;
             border-radius: 999px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             color: white;
-            letter-spacing: 0.2px;
-            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .pdf-card.sql .type {
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-        }
+        .type-badge.js { background: var(--js-yellow); color: var(--js-dark); }
+        .type-badge.react { background: var(--react-blue); color: var(--react-dark); }
 
-        .pdf-card.nosql .type {
-            background: linear-gradient(90deg, var(--nosql-color), var(--nosql-light));
-        }
 
-        .pdf-card:hover .file-path {
-            opacity: 1;
-        }
-
+        /* Footer */
         footer {
             text-align: center;
-            padding: 3rem 0 2rem;
-            margin-top: 4rem;
+            padding: 40px;
             color: var(--text-light);
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            border-top: 1px solid #e2e8f0;
+            margin-top: 40px;
         }
+
+        /* React Atom Spin Animation */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem 1.25rem;
-            }
-
-            h1 {
-                font-size: 2.25rem;
-            }
-
-            .subtitle {
-                font-size: 1.05rem;
-            }
-
-            .pdf-gallery {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                margin: 2.5rem 0;
-            }
-
-            .pdf-card {
-                padding: 1.75rem 1.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .pdf-card {
-                padding: 1.5rem 1.25rem;
-            }
+            .hero h1 { font-size: 2.5rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .card-actions { justify-content: space-around; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Ateliers</h1>
-            <p class="subtitle">Houdaifa Zaidi</p>
-        </header>
 
-        <main class="pdf-gallery">
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 1</h3>
-                <p class="type">JS</p>
-                <a href="https://houdaifazaidi.github.io/Rock_Paper_Scissors/" class="pdf-link" target="_blank">View Page</a>
-                <div class="file-path">houdaifazaidi.github.io/Rock_Paper_Scissors/</div>
-            </div>
+    <header>
+        <a href="https://houdaifazaidi.github.io/Portfolio/" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Main Portfolio</a>
+        <a href="#" class="brand">HZ<span class="react">.React</span>/<span class="js">JS</span></a>
+    </header>
 
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 2</h3>
-                <p class="type">JS</p>
-                <a href="https://houdaifazaidi.github.io/QuranReciter/" class="pdf-link" target="_blank">View Page</a>
-                <div class="file-path">houdaifazaidi.github.io/QuranReciter/</div>
-            </div>
-
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 1</h3>
-                <p class="type">React</p>
-                <a href="https://houdaifazaidi.github.io/react_atelier1/" class="pdf-link" target="_blank">View Page</a>
-                <a href="https://github.com/houdaifazaidi/react_atelier1" class="pdf-link" target="_blank">View Repo</a>
-                <div class="file-path">houdaifazaidi.github.io/react_atelier1/</div>
-            </div>
-
-
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 2</h3>
-                <p class="type">React</p>
-                <a href="https://houdaifazaidi.github.io/react_atelier2/" class="pdf-link" target="_blank">View Page</a>
-                <a href="https://github.com/houdaifazaidi/react_atelier2" class="pdf-link" target="_blank">View Repo</a>
-                <div class="file-path">houdaifazaidi.github.io/react_atelier2/</div>
-            </div>
-
-
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 3</h3>
-                <p class="type">React</p>
-                <a href="https://houdaifazaidi.github.io/react_atelier3/" class="pdf-link" target="_blank">View Page</a>
-                <a href="https://github.com/houdaifazaidi/react_atelier3" class="pdf-link" target="_blank">View Repo</a>
-                <div class="file-path">houdaifazaidi.github.io/react_atelier3/</div>
-            </div>
-
-
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 4</h3>
-                <p class="type">React</p>
-                <a href="https://houdaifazaidi.github.io/react_atelier4/" class="pdf-link" target="_blank">View Page</a>
-                <a href="https://github.com/houdaifazaidi/react_atelier4" class="pdf-link" target="_blank">View Repo</a>
-                <div class="file-path">houdaifazaidi.github.io/react_atelier4/</div>
-            </div>
-
-
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 5</h3>
-                <p class="type">React</p>
-                <a href="https://houdaifazaidi.github.io/react_atelier5/" class="pdf-link" target="_blank">View Page</a>
-                <a href="https://github.com/houdaifazaidi/react_atelier5" class="pdf-link" target="_blank">View Repo</a>
-                <div class="file-path">houdaifazaidi.github.io/react_atelier5/</div>
-            </div>
-
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 6 (Tasks)</h3>
-                <p class="type">React</p>
-                <a href="https://houdaifazaidi.github.io/react_atelier6/" class="pdf-link" target="_blank">View Page</a>
-                <a href="https://github.com/houdaifazaidi/react_atelier6" class="pdf-link" target="_blank">View Repo</a>
-                <div class="file-path">houdaifazaidi.github.io/react_atelier6/</div>
-            </div>
-
-            <div class="pdf-card sql">
-                <div class="pdf-icon">📄</div>
-                <h3>Atelier 7 (EFF)</h3>
-                <p class="type">React</p>
-                <a href="https://houdaifazaidi.github.io/react_atelier7/" class="pdf-link" target="_blank">View Page</a>
-                <a href="https://github.com/houdaifazaidi/react_atelier7" class="pdf-link" target="_blank">View Repo</a>
-                <div class="file-path">houdaifazaidi.github.io/react_atelier7/</div>
-            </div>
-
-
-
-        </main>
-
-        <footer>
-            <p>Replace the sample paths with your actual PDF file paths</p>
-        </footer>
+    <div class="hero">
+        <div class="hero-icon-container">
+             <i class="fab fa-react react-logo"></i>
+             <i class="fab fa-js-square js-logo"></i>
+        </div>
+        <h1>Frontend Development Workshops & Projects</h1>
+        <p>A compilation of my practical workshops (`Ateliers`) focusing on foundational JavaScript and modern component-based development using the React framework.</p>
+        
+        <div class="filter-container">
+            <button class="filter-btn active all-active" onclick="filterProjects('all')">All Projects (9)</button>
+            <button class="filter-btn react-active" onclick="filterProjects('React')">React Workshops (7)</button>
+            <button class="filter-btn js-active" onclick="filterProjects('JS')">JavaScript Workshops (2)</button>
+        </div>
     </div>
+
+    <div class="container">
+        <div class="gallery-grid">
+            
+            <div class="project-card card-js" data-category="JS">
+                <div class="card-top-bar bar-js"></div>
+                <p class="type-badge js">JS</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-hand-rock"></i></div>
+                    <h3>Atelier 1</h3>
+                    <p class="description">Classic Rock-Paper-Scissors game. Focuses on core JavaScript logic, DOM manipulation, and fundamental game mechanics.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/Rock_Paper_Scissors/" class="btn-link" target="_blank">View Live Page <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/Rock_Paper_Scissors/</div>
+                </div>
+            </div>
+
+            <div class="project-card card-js" data-category="JS">
+                <div class="card-top-bar bar-js"></div>
+                <p class="type-badge js">JS</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-volume-up"></i></div>
+                    <h3>Atelier 2</h3>
+                    <p class="description">A sound-based application using JavaScript for audio control. Demonstrates media element handling and asynchronous operations.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/QuranReciter/" class="btn-link" target="_blank">View Live Page <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/QuranReciter/</div>
+                </div>
+            </div>
+
+            <div class="project-card card-react" data-category="React">
+                <div class="card-top-bar bar-react"></div>
+                <p class="type-badge react">React</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-atom"></i></div>
+                    <h3>Atelier 1</h3>
+                    <p class="description">Introduction to the React library, focusing on basic component creation and the JSX syntax.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/react_atelier1/" class="btn-link" target="_blank">View Page</a>
+                        <a href="https://github.com/houdaifazaidi/react_atelier1" class="btn-link" target="_blank">View Repo <i class="fab fa-github"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/react_atelier1/</div>
+                </div>
+            </div>
+
+            <div class="project-card card-react" data-category="React">
+                <div class="card-top-bar bar-react"></div>
+                <p class="type-badge react">React</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-share-alt"></i></div>
+                    <h3>Atelier 2</h3>
+                    <p class="description">Explores the fundamental flow of data between components using Props and local state management.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/react_atelier2/" class="btn-link" target="_blank">View Page</a>
+                        <a href="https://github.com/houdaifazaidi/react_atelier2" class="btn-link" target="_blank">View Repo <i class="fab fa-github"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/react_atelier2/</div>
+                </div>
+            </div>
+
+            <div class="project-card card-react" data-category="React">
+                <div class="card-top-bar bar-react"></div>
+                <p class="type-badge react">React</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-lightbulb"></i></div>
+                    <h3>Atelier 3</h3>
+                    <p class="description">Utilizes the useState hook to manage component state, handle user inputs, and implement conditional rendering logic.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/react_atelier3/" class="btn-link" target="_blank">View Page</a>
+                        <a href="https://github.com/houdaifazaidi/react_atelier3" class="btn-link" target="_blank">View Repo <i class="fab fa-github"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/react_atelier3/</div>
+                </div>
+            </div>
+
+            <div class="project-card card-react" data-category="React">
+                <div class="card-top-bar bar-react"></div>
+                <p class="type-badge react">React</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-keyboard"></i></div>
+                    <h3>Atelier 4</h3>
+                    <p class="description">Demonstrates controlled forms and the useRef hook to link inputs (text, select, radio) to the component state.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/react_atelier4/" class="btn-link" target="_blank">View Page</a>
+                        <a href="https://github.com/houdaifazaidi/react_atelier4" class="btn-link" target="_blank">View Repo <i class="fab fa-github"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/react_atelier4/</div>
+                </div>
+            </div>
+
+            <div class="project-card card-react" data-category="React">
+                <div class="card-top-bar bar-react"></div>
+                <p class="type-badge react">React</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-globe-americas"></i></div>
+                    <h3>Atelier 5</h3>
+                    <p class="description">Fetches country data via API using the useEffect hook. Features real-time search and filtering capabilities.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/react_atelier5/" class="btn-link" target="_blank">View Page</a>
+                        <a href="https://github.com/houdaifazaidi/react_atelier5" class="btn-link" target="_blank">View Repo <i class="fab fa-github"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/react_atelier5/</div>
+                </div>
+            </div>
+
+            <div class="project-card card-react" data-category="React">
+                <div class="card-top-bar bar-react"></div>
+                <p class="type-badge react">React</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-clipboard-list"></i></div>
+                    <h3>Atelier 6 (Tasks)</h3>
+                    <p class="description">A To-Do List application. Demonstrates CRUD operations (Create, Read, Update, Delete) for managing task state.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/react_atelier6/" class="btn-link" target="_blank">View Page</a>
+                        <a href="https://github.com/houdaifazaidi/react_atelier6" class="btn-link" target="_blank">View Repo <i class="fab fa-github"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/react_atelier6/</div>
+                </div>
+            </div>
+
+            <div class="project-card card-react" data-category="React">
+                <div class="card-top-bar bar-react"></div>
+                <p class="type-badge react">React</p>
+                <div class="card-content">
+                    <div class="icon-box"><i class="fas fa-graduation-cap"></i></div>
+                    <h3>Atelier 7 (EFF)</h3>
+                    <p class="description">Solutions for the Final Study Exam (Examen Fin d'Étude), addressing practical React scenarios and questions.</p>
+                    <div class="card-actions">
+                        <a href="https://houdaifazaidi.github.io/react_atelier7/" class="btn-link" target="_blank">View Page</a>
+                        <a href="https://github.com/houdaifazaidi/react_atelier7" class="btn-link" target="_blank">View Repo <i class="fab fa-github"></i></a>
+                    </div>
+                    <div class="file-path-new">houdaifazaidi.github.io/react_atelier7/</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Houdaifa Zaidi. Frontend Projects Gallery.</p>
+    </footer>
+
+    <script>
+        function filterProjects(category) {
+            // Update button styles
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active', 'react-active', 'js-active', 'all-active'));
+
+            // Determine which button was clicked and set its active class
+            const targetButton = document.querySelector(`.filter-btn[onclick*="'${category}'"]`);
+            if (targetButton) {
+                targetButton.classList.add('active');
+                if (category === 'React') {
+                    targetButton.classList.add('react-active');
+                } else if (category === 'JS') {
+                    targetButton.classList.add('js-active');
+                } else {
+                     targetButton.classList.add('all-active');
+                }
+            }
+
+            // Filter cards
+            const cards = document.querySelectorAll('.project-card');
+            
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'flex';
+                    // Optional: Add a slight animation when showing
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.opacity = '1', 50);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initial load to set the 'All' button as active and run the filter
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial call to set defaults
+            filterProjects('all');
+        });
+    </script>
 </body>
 </html>
